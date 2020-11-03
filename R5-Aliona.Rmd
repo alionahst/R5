@@ -1,0 +1,110 @@
+---
+title: "R5"
+author: "Hoste Aliona"
+date: "03/11/2020"
+output: html_document
+---
+
+### Exercice 1
+###### For the data InsectSpray, make a table for the number of insects for each spray with the mean, median and standard error.
+###### Note: Remember to use knitr::kable(), or a similar function to print the table with its caption.
+
+```{r exercice 1, include=TRUE}
+InsectSprays <- InsectSprays
+
+Spray <- factor()
+Count <- integer()
+SS <- integer()
+Mean <- integer()
+Median <- integer()
+Standard_error <- integer()
+
+# create Spray vectors with all the levels 
+for(i in levels(InsectSprays$spray)){
+  Spray <- c(Spray,i)
+}
+# or Spray <- levels(InsectSprays$spray)
+
+# create the Count vector where i takes each value of Spray (A, B, C...) and do the sum of count for each Spray categories
+for(i in Spray){
+  SS <- subset(InsectSprays$count,InsectSprays$spray == i)
+  Count <- c(Count, sum(SS))
+  Mean <- c(Mean, mean(SS))
+  Median <- c(Median, median(SS))
+  Standard_error <- c(Standard_error, sd(SS)/sqrt(length(SS)))
+}
+
+# Create the data frame
+Datatable <- data.frame(Spray, Count, Mean, Median, Standard_error)
+
+
+knitr::kable(Datatable, caption = "Table for the number of insects for each spray with the mean, median and standard error")
+
+```
+
+
+
+
+### Exercice 2
+######Print a plot to see the differences of counts between sprays. Include a caption explaining the figure. 
+###### Which type of plot is the one you choose and why? barplot because we have a continuous variable in function of categories
+```{r exercice 2, fig.cap=cap,echo=TRUE}
+barplot(Datatable$Count ~ Datatable$Spray, Datatable, col= as.factor(Datatable$Spray), ylab = "Count", xlab = "Spray") 
+cap <- character()
+cap <- "Figure 1: Differences of counts between sprays "
+legend("top", legend = paste("Spray =", Spray), lty = 1, col = 1:6)
+
+```
+
+
+### Exercice 3
+###### Test for differences between sprays using anova and a posthoc comparison and redo the previous plot including the representation of all posthoc differences.
+###### Note: for the anova use the command aov() and for the posthoc comparison use the Tukey’s ‘Honest Significant Difference’ method. For this method try the TukeyHSD() and the agricolae::HSD.test() and see the differences.
+```{r exercice 3, echo=TRUE}
+# Create object with anova
+a1 <- aov(count ~ spray, data = InsectSprays)
+
+#Visualise results for anova test
+anova(a1)
+
+#Plot anova
+plot(a1)
+
+TukeyHSD(a1)
+
+#install.packages("agricolae")
+library("agricolae")
+a3 <- agricolae::HSD.test(a1, "spray")
+a3
+
+
+```
+
+######We can see that using **agricolae::HSD.test** is easier to get informations
+
+
+### Exercice 4
+```{r exercice 4, echo=TRUE}
+
+
+```
+
+### Exercice 5
+```{r exercice 5, fig.cap=cap,echo=TRUE}
+
+
+```
+
+
+### Exercice 6
+```{r exercice 6, fig.cap=cap,echo=TRUE}
+
+
+```
+
+
+### Exercice 7
+```{r exercice 7, fig.cap=cap,echo=TRUE}
+
+
+```
